@@ -1,9 +1,11 @@
+import os
+import sys
 import numpy as np
 from pandas import DataFrame
 from scipy.special import comb
 import matplotlib.pyplot as plt
 
-def rarefy(x, method='rarefy', size = None, breakNA=True):
+def rarefy(x, imgfile:str, method='rarefy', size = None, breakNA=True):
     '''
     Docstring for function ecopy.rarefy
     ========================
@@ -54,6 +56,11 @@ def rarefy(x, method='rarefy', size = None, breakNA=True):
     if method not in listofmethods:
         msg = 'method argument {0!s} is not an accepted rarefaction method'.format(method)
         raise ValueError(msg)
+    if not isinstance(imgfile, str):
+        mgs = 'second positional argument imgfile must be a str'
+        raise ValueError(msg)
+    if os.path.exists(imgfile):
+        sys.stderr.write("Warning: overwriting existing imgfile '{0}'\n".format(imgfile))
     if not isinstance(x, (DataFrame, np.ndarray)):
         msg = 'x argument must be a numpy array or pandas dataframe'
         raise ValueError(msg)
@@ -95,7 +102,8 @@ def rarefy(x, method='rarefy', size = None, breakNA=True):
             z.apply(rCurve, axis=1)
             plt.xlabel('Number of Individuals')
             plt.ylabel('Number of Species')
-            plt.show()
+            #plt.show()
+            plt.savefig(imgfile)
     if isinstance(x, np.ndarray):
         if breakNA:
             if np.isnan(np.sum(x)):
@@ -127,7 +135,9 @@ def rarefy(x, method='rarefy', size = None, breakNA=True):
             z.apply(rCurve, axis=1)
             plt.xlabel('Number of Individuals')
             plt.ylabel('Number of Species')
-            plt.show()
+            #plt.show()
+            plt.savefig(imgfile)
+
 
 def rare(y, size):
     notabs = ~np.isnan(y)
